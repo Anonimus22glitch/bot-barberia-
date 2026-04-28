@@ -1,0 +1,37 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+citas = []
+
+@app.route("/webhook", methods=["POST"])
+def bot():
+           mensaje = request.json.get("message", "").lower()
+           usuario = request.json.get("user", "cliente")
+
+           if "hola" in mensaje:
+               respuesta = "Hola Bienvenidos a la barberia ¿Que necesitas?\n1. Precios\n2. Horarios\n3. Agendar cita"
+
+           elif "1" in mensaje or "precio" in mensaje:
+                   respuesta = "Precios:\nCorte: $15.000\nBarba: $10.000"
+
+           elif "2" in mensaje or "horatrio" in mensaje:
+                       respuesta = "🕒 Horario:\nLunes a sábado 9am - 8pm"
+
+           elif "3" in mensaje or "cita" in mensaje:
+                    citas.append(usuario)
+                    respuesta = "listo, te agendamos. Te escribiran pronto para confirmar."
+
+           elif "ubicacion" in mensaje:
+                    respuesta = "Estamos ubicados en: Calle 123 #45-67"
+
+           else:
+                respuesta = "No entendí escribe:\n1 Precios\n2 Horarios\n3 Citas"
+
+           return jsonify({"reply": respuesta})
+
+
+import os
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
